@@ -3,7 +3,7 @@ UNIX standard mail command aleternative by python, supporting to send UTF-8/HTML
 
 # How to use
 
-# Prepare
+## Prepare
 
 Please have $HOME/.mailrc
 
@@ -53,4 +53,4 @@ $ echo hoge | mail.py -s "email subject" -a hoge.txt hoge@hoge.com
 $ mail.py -t html -s "Html mail" -r hoge.png < hoge.html
 ```
 
-Please note that hoge.png is used by the hoge.html and if you sepcify the resources with -r, mail.py will translate the URL; for example, <img src="hoge.png"> --> <img src="cid:hoge.png">
+Please note that hoge.png is used by the hoge.html and if you sepcify the resources with -r, mail.py will translate the URL; for example, ```<img src="hoge.png"> --> <img src="cid:hoge.png">```
