@@ -7,7 +7,7 @@ UNIX standard mail command aleternative by python, supporting to send UTF-8/HTML
 
 Please have $HOME/.mailrc
 
-## .mailrc example for gmail (with TLS authentification)
+### .mailrc example for gmail (with TLS authentification)
 
 ```~/.mailrc
 set smtp-use-starttls
@@ -20,7 +20,7 @@ set smtp-auth-password=hogepassword
 set from="hoge.hoge@gmail.com(hoge)"
 ```
 
-## .mailrc example for smtp without TLS authentification
+### .mailrc example for smtp without TLS authentification
 
 ```~/.mailrc
 set smtp=smtp://smtp.gmail.com:25
