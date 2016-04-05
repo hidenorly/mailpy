@@ -156,10 +156,9 @@ def send(s, from_addr, to_addr, msg):
 
 def getAttachments(attachments):
 	if attachments!=None:
-		if attachments.find(",")!=-1:
-			attachments = attachments.split(",")
-		else:
-			attachments = [ attachments ]
+		if isinstance(attachments, list) and len(attachments)==1:
+			if attachments[0].find(",")!=-1:
+				attachments = attachments[0].split(",")
 	return attachments
 
 if __name__ == '__main__':
@@ -169,7 +168,7 @@ if __name__ == '__main__':
 	parser.add_option("-s", "--subject", action="store", type="string", dest="subject", help="Specify Subject:")
 	parser.add_option("-c", "--cc", action="store", type="string", dest="sendAsCC", help="Specify Cc:")
 	parser.add_option("-b", "--bcc", action="store", type="string", dest="sendAsBCC", help="Specify Bcc:")
-	parser.add_option("-a", "--attach", action="store", type="string", dest="attachments", default=None, help="Specify attachment file(,)")
+	parser.add_option("-a", "--attach", action="append", type="string", dest="attachments", default=None, help="Specify attachment file(,)")
 	parser.add_option("-t", "--type", action="store", type="string", dest="contentType", default='plain', help="Specify plain or html")
 	parser.add_option("-r", "--relatedAttach", action="store", type="string", dest="relatedAttachments", default=None, help="Specify attachment files for html(,)")
 
