@@ -123,7 +123,7 @@ def create_message(from_addr, to_addr, cc_addr, bcc_addr, subject, body, content
 				related.attach(img)
 			else:
 				part = MIMEBase('application', "octet-stream")
-				part.set_payload( open(f,"rb").read() )
+				part.set_payload(open(f,"rb").read() )
 				encoders.encode_base64(part)
 				part.add_header('Content-Disposition', 'attachment; filename="{0}"'.format(os.path.basename(f)))
 				part['Content-ID'] = '<%s>' % filename
@@ -170,7 +170,7 @@ if __name__ == '__main__':
 	parser.add_option("-b", "--bcc", action="store", type="string", dest="sendAsBCC", help="Specify Bcc:")
 	parser.add_option("-a", "--attach", action="append", type="string", dest="attachments", default=None, help="Specify attachment file(,)")
 	parser.add_option("-t", "--type", action="store", type="string", dest="contentType", default='plain', help="Specify plain or html")
-	parser.add_option("-r", "--relatedAttach", action="store", type="string", dest="relatedAttachments", default=None, help="Specify attachment files for html(,)")
+	parser.add_option("-r", "--relatedAttach", action="append", type="string", dest="relatedAttachments", default=None, help="Specify attachment files for html(,)")
 
 	(options, args) = parser.parse_args()
 
