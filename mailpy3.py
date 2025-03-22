@@ -143,7 +143,7 @@ def getAuthenticatedSMTP(smtpHost, smtpPort, userId, password, useTls):
 	return s
 
 def send(s, from_addr, to_addr, msg):
-	s.sendmail(from_addr, [to_addr], msg.as_string())
+	s.sendmail(from_addr, [to_addr], msg.as_bytes())
 
 def getAttachments(attachments):
 	if attachments!=None:
