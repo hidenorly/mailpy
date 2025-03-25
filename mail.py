@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 #
-# Copyright (C) 2016 hidenorly
+# Copyright (C) 2016, 2025 hidenorly
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ def loadMailRC():
 
 	return mailrc
 
-def create_message(from_addr, to_addr, cc_addr, bcc_addr, subject, body, contentType, attachments, relatedAttachments, encoding):
+def create_message(from_addr, to_addrs, cc_addrs, bcc_addrs, subject, body, contentType, attachments, relatedAttachments, encoding):
 	related = None
 	msg = None
 	
@@ -100,11 +100,11 @@ def create_message(from_addr, to_addr, cc_addr, bcc_addr, subject, body, content
 	# handle header
 	msg['Subject'] = Header(subject, encoding)
 	msg['From'] = from_addr
-	msg['To'] = to_addr
-	if cc_addr:
-	    msg['Cc'] = cc_addr
-	if bcc_addr:
-	    msg['Bcc'] = bcc_addr
+	msg['To'] = ", ".join(to_addrs)
+	if cc_addrs:
+		msg['Cc'] = ", ".join(cc_addrs)
+	#if bcc_addrs:
+	#	msg['Bcc'] = ", ".join(bcc_addrs)
 	msg['Date'] = formatdate(localtime=True)
 
 	# handle attachments
@@ -151,8 +151,8 @@ def getAuthenticatedSMTP(smtpHost, smtpPort, userId, password, useTLS):
 		s.login(userId, password)
 	return s
 
-def send(s, from_addr, to_addr, msg):
-    s.sendmail(from_addr, [to_addr], msg.as_string())
+def send(s, from_addr, to_addrs, msg):
+    s.sendmail(from_addr, to_addrs, msg.as_string())
 
 def getAttachments(attachments):
 	if attachments!=None:
@@ -160,6 +160,11 @@ def getAttachments(attachments):
 			if attachments[0].find(",")!=-1:
 				attachments = attachments[0].split(",")
 	return attachments
+
+def email_address_normalizer(addresss):
+	if addresss:
+		return [address.strip() for address in addresss.split(",")]
+	return None
 
 if __name__ == '__main__':
 	parser = OptionParser()
@@ -179,7 +184,7 @@ if __name__ == '__main__':
 		parser.print_help()
 		exit()
 
-	to_addr = args[0]
+	to_addrs = email_address_normalizer(args[0])
 	mailrc = loadMailRC()
 
 	from_addr = mailrc['from_addr']
@@ -190,8 +195,15 @@ if __name__ == '__main__':
 
 	attachments = getAttachments( options.attachments )
 	relatedAttachments = getAttachments( options.relatedAttachments )
+	cc_addrs = email_address_normalizer(options.sendAsCC)
+	bcc_addrs = email_address_normalizer(options.sendAsBCC)
 
-	msg = create_message(from_addr, to_addr, options.sendAsCC, options.sendAsBCC, options.subject, body, options.contentType, attachments, relatedAttachments, 'utf-8') #'ISO-2022-JP')
+	msg = create_message(from_addr, to_addrs, cc_addrs, bcc_addrs, options.subject, body, options.contentType, attachments, relatedAttachments, 'utf-8')  # 'ISO-2022-JP')
 	s = getAuthenticatedSMTP(mailrc['smtp'], mailrc['port'], mailrc['userId'], mailrc['password'], mailrc['useTLS'])
-	send(s, from_addr, to_addr, msg)
-	s.close
+	actual_destinations = to_addrs
+	if cc_addrs:
+		actual_destinations.extend(cc_addrs)
+	if bcc_addrs:
+		actual_destinations.extend(bcc_addrs)
+	send(s, from_addr, actual_destinations, msg)
+	s.close()
